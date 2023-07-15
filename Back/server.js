@@ -6,5 +6,6 @@ app.set('port', process.env.PORT || 3000);
 const server = http.createServer(app);
 
 server.listen(app.get('port'), () => {
-    console.log('listening on port')
+    const port = server.address().port;
+    console.log(`Listening on port ${port}`);
 });
