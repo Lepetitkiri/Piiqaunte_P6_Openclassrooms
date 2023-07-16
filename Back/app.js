@@ -1,6 +1,9 @@
 const express = require('express');
-const app = express();
 const mongoose = require('mongoose');
+const app = express();
+
+const userRoutes = require('./routes/user');
+
 require('dotenv').config();
 
 mongoose.connect(process.env.mongoDBURI,
@@ -9,9 +12,6 @@ mongoose.connect(process.env.mongoDBURI,
   .then(() => console.log('Connexion à MongoDB réussie !'))
   .catch(() => console.log('Connexion à MongoDB échouée !'));
 
-app.use((req, res) => {
-res.statusCode = 200;
-res.end("Test");
-});
+app.use('/api/auth', userRoutes);
 
 module.exports = app;
