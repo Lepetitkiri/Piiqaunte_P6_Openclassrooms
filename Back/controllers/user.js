@@ -22,12 +22,20 @@ exports.createUser = (req, res, next) => {
 
 exports.login = (req, res, next) => {
     /*Recherche d'email correspondant dans la database*/
-    user.findOne({email: req.body.email}, {password: 0})
+    user.findOne({email: req.body.email})
     .then((user) => {
-        if (user !== null) {
-            res.status(200).json({ message: 'Utilisateur trouvé' })
+        if (user !== null) { /*L'email a bien été trouvé dans la database*/       
+            bcrypt.compare(req.body.password, user.password) /*comparaison du mdp saisi et stocké en database*/   
+            .then(valid => {
+                if (valid) {
+                    res.status(200).json({ message: 'Ca correspond'})
+                } else {
+                    res.status(403).json({message: 'Mauvaise correspondance email/mot de passe !'}) /*Erreur de correspondance du mdp dans la database*/
+                }
+            })
+            .catch((error) => res.status(500).json({ error })) /*Erreur de traitement de le comparaison mdp*/
         } else {
-            res.status(404).json({ message: 'Mauvaise correspondance email/mot de passe !' }) /*Erreur de correspondance de l'email dans la database*/
+            return res.status(404).json({ message: 'Mauvaise correspondance email/mot de passe !' }) /*Erreur de correspondance de l'email dans la database*/
         }})
-    .catch(error => res.status(500).json({ error })) /*Erreur de traitement de la requete*/
+    .catch((error) => res.status(500).json({ error })) /*Erreur de traitement de la requete*/
 };
