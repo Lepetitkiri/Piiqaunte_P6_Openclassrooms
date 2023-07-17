@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const app = express();
 
 const userRoutes = require('./routes/user');
+const sauceRoutes = require('./routes/sauces');
 
 require('dotenv').config();
 
@@ -23,5 +24,6 @@ mongoose.connect(process.env.mongoDBURI,
 app.use(express.json()); /*Ajout du middleware express.json() à express pour pouvoir récupérer les données des requêtes via req.body*/
 
 app.use('/api/auth', userRoutes);
+app.use('/api/sauces', sauceRoutes);
 
 module.exports = app;
