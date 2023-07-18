@@ -4,6 +4,8 @@ const bcrypt = require('bcrypt'); /*importation du package de cryptage du passwo
 const jwt = require('jsonwebtoken') /*importation du package de génération de token utilsateur*/
 const validator = require('validator'); /*importation du package de validation permettant de controler le format de l'adresse email entrée*/
 
+require("dotenv").config();
+
 exports.createUser = (req, res, next) => {
     /*Hashage du password*/
         bcrypt.hash(req.body.password, 10)
@@ -35,7 +37,7 @@ exports.login = (req, res, next) => {
                         res.status(200).json({ /* Renvoi d'un objet JSON si login réussi */
                             userId: user._id, 
                             token: jwt.sign( { userId: user._id }, 
-                                'RANDOM_TOKEN_SECRET',
+                                process.env.TOKEN_SECRET,
                                 { expiresIn: '24h' } )});
                     } else {
                         res.status(403).json({message: 'Mauvaise correspondance email/mot de passe !'}) /*Erreur de correspondance du mdp dans la database*/
