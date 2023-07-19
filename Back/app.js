@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 const app = express();
 
 const userRoutes = require('./routes/user');
@@ -12,6 +13,11 @@ mongoose.connect(process.env.mongoDBURI,
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
   .catch(() => console.log('Connexion à MongoDB échouée !'));
+
+/*Middleware d'analyse des requêtes JSON*/
+app.use(bodyParser.json());
+/*Middleware d'analyse des requêtes via des formulaires HTML*/
+app.use(bodyParser.urlencoded({ extended: true }));
 
   /* Prolèmes de CORS*/
  app.use((req, res, next) => {
