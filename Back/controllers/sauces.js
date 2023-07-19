@@ -44,3 +44,18 @@ exports.getOneSauce = (req, res, next) => {
   .then((sauce) => res.status(200).json({ sauce }))
   .catch((error) => res.status(404).json({ error })); /*Erreur de traitement de la requete*/
 };
+
+/*Suppression de la base de données d'une sauce via DELETE vers /api/sauces/:id*/
+exports.deleteOneSauce = (req, res, next) => {
+  sauces.findOne({_id: req.params.id}) /*Récupération de la sauce dans la database*/
+  .then((sauce) => {
+    if (req.auth.userId === sauce.userId) {
+      sauce.deleteOne({_id: req.params.id})
+      .then((sauce) => res.status(200).json({ message: `Bye Bye la sauce, on te supprime définitivement !` }))
+      .catch((error) => res.status(404).json({ error })) /*Erreur dans la suppression de la sauce*/
+    } else {
+       res.status(403).json({ message: "Vous n'êtes pas habilité à toucher à la sauce des autres !" })
+    };
+  })
+  .catch((error) => res.status(404).json({ error })); /*Erreur de traitement de la requete*/
+};
