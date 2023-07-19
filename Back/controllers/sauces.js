@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const express = require('express');
 const bodyParser = require('body-parser');
 
+/* Enregistrement dans la base de données d'une nouvelle sauce via POST vers /api/sauces*/
 exports.createANewSauce = (req, res, next) => {
 
     const sauceObject = req.body;
@@ -35,4 +36,11 @@ exports.getAllSauces = (req, res, next) => {
   sauces.find()
   .then((saucesData) => res.status(200).json({ sauces: saucesData }))
   .catch((error) => res.status(500).json({ error })); /*Erreur de traitement de la requete*/
+};
+
+/*Récupération d'une sauce spécifique de la base de données via GET vers /api/sauces/:id*/
+exports.getOneSauce = (req, res, next) => {
+  sauces.findOne({_id: req.params.id})
+  .then((sauce) => res.status(200).json({ sauce }))
+  .catch((error) => res.status(404).json({ error })); /*Erreur de traitement de la requete*/
 };

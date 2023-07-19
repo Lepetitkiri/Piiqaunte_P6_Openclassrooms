@@ -5,6 +5,7 @@ const auth = require('../Middleware/auth'); /*importation du Middleware de véri
 const multer = require('../Middleware/multer'); /*importation du Middleware d'enregistrement des fichiers'*/
 
 router.get('', auth, saucesController.getAllSauces);
+router.get('/:id', auth, saucesController.getOneSauce);
 router.post('', auth, saucesController.createANewSauce);
 
 module.exports = router;
