@@ -4,44 +4,46 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 /* Enregistrement dans la base de données d'une nouvelle sauce via POST vers /api/sauces*/
-exports.createANewSauce = (req, res, next) => {
+exports.createANewSauce = async (req, res, next) => {
 
-    const sauceObject = req.body;
-    delete sauceObject._id;
-  
-    const newSauce = new sauces({
-      userId: req.auth.userId,
-      name: sauceObject.name,
-      manufacturer: req.body.manufacturer,
-      description: sauceObject.description,
-      mainPepper: sauceObject.mainPepper,
-      imageUrl: sauceObject.imageUrl, /*Modifier imageUrl via le Middleware multer*/
-      heat: sauceObject.heat,
-      likes: 0,
-      dislikes: 0,
-      usersLiked: [],
-      usersDisliked: []
+  const sauceObject = req.body.sauce;
+  delete sauceObject._id;
+
+  const newSauce = new sauces({
+    userId: req.auth.userId,
+    name: sauceObject.name,
+    manufacturer: sauceObject.manufacturer,
+    description: sauceObject.description,
+    mainPepper: sauceObject.mainPepper,
+    imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`,
+    heat: sauceObject.heat,
+    likes: 0,
+    dislikes: 0,
+    usersLiked: [],
+    usersDisliked: []
+  });
+
+  newSauce.save()
+    .then(() => {
+      res.status(201).json({ message: 'Sauce enregistrée', sauce: newSauce });
+    })
+    .catch((error) => {
+      res.status(400).json({ error });
     });
-      newSauce.save()
-      .then(() => {
-        res.status(201).json({ message: 'Sauce enregistrée', sauce: newSauce });
-      })
-      .catch((error) => {
-        res.status(400).json({ error });
-      });
 };
+
 
 /* Récupération de toutes les sauces de la base de données via GET vers /api/sauces*/
 exports.getAllSauces = (req, res, next) => {
   sauces.find()
-  .then((saucesData) => res.status(200).json({ sauces: saucesData }))
+  .then((saucesData) => res.status(200).json(saucesData))
   .catch((error) => res.status(500).json({ error })); /*Erreur de traitement de la requete*/
 };
 
 /*Récupération d'une sauce spécifique de la base de données via GET vers /api/sauces/:id*/
 exports.getOneSauce = (req, res, next) => {
   sauces.findOne({_id: req.params.id})
-  .then((sauce) => res.status(200).json({ sauce }))
+  .then((sauce) => res.status(200).json(sauce))
   .catch((error) => res.status(404).json({ error })); /*Erreur de traitement de la requete*/
 };
 
