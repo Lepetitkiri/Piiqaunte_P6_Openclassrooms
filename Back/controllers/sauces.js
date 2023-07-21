@@ -2,12 +2,16 @@ const sauces = require('../models/sauce'); /*importation du schema*/
 const mongoose = require('mongoose');
 const express = require('express');
 const bodyParser = require('body-parser');
+const multer = require('multer');
 
 /* Enregistrement dans la base de données d'une nouvelle sauce via POST vers /api/sauces*/
 exports.createANewSauce = async (req, res, next) => {
 
   const sauceObject = req.body.sauce;
-  delete sauceObject._id;
+  const requestObject = req.body;
+  console.log(requestObject);
+  console.log(sauceObject);
+  //delete sauceObject._id;
 
   const newSauce = new sauces({
     userId: req.auth.userId,

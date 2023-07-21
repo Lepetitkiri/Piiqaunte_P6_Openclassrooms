@@ -32,4 +32,13 @@ app.use(express.json()); /*Ajout du middleware express.json() à express pour po
 app.use('/api/auth', userRoutes);
 app.use('/api/sauces', sauceRoutes);
 
+/*Ajout temporaire pour tests */
+//app.post('/api/sauces', (req, res) => {
+  //const jsondata = JSON.parse(req.body);
+  //const jsonData = req.body;
+  //const jsonDataSauce = req.body.sauce;
+  //console.log(jsonData);
+  //console.log(jsonDataSauce);
+//}) /* fin */
+
 module.exports = app;
