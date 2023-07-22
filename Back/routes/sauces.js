@@ -6,7 +6,7 @@ const multer = require('../Middleware/multer'); /*importation du Middleware d'en
 
 router.get('', auth, saucesController.getAllSauces);
 router.get('/:id', auth, saucesController.getOneSauce);
-router.post('', auth, saucesController.createANewSauce);
+router.post('/', auth, multer, saucesController.createANewSauce);
 router.delete('/:id', auth, saucesController.deleteOneSauce);
 
 module.exports = router;
