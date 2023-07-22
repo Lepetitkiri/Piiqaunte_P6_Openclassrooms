@@ -1,4 +1,5 @@
 const multer = require('multer');
+const path = require('path');
 
 /*Dictionnaire de récupération des extensions*/
 const MIME_TYPES = {
@@ -13,7 +14,8 @@ const MIME_TYPES = {
 /* Constante définissant la destination et le nom d'enregistrement des fichiers entrants*/
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, './images');
+      const absolutePath = path.resolve('./images'); /* Création d'une route statique */
+      cb(null, absolutePath);
     },
     filename: function (req, file, cb) {
       const nameWithExtension = file.originalname.split(" ").join("_");

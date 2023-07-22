@@ -30,7 +30,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(express.json()); /*Ajout du middleware express.json() à express pour pouvoir récupérer les données des requêtes via req.body*/
 
-app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/images', express.static(path.join(__dirname, 'images'))); /*Création d'une route statique */
 app.use('/api/auth', userRoutes);
 app.use('/api/sauces', sauceRoutes);
 
