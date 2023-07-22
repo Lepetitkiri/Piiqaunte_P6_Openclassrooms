@@ -8,5 +8,6 @@ router.get('', auth, saucesController.getAllSauces);
 router.get('/:id', auth, saucesController.getOneSauce);
 router.post('/', auth, multer, saucesController.createANewSauce);
 router.delete('/:id', auth, saucesController.deleteOneSauce);
+router.put('/:id', auth, multer, saucesController.modifySauce);
 
 module.exports = router;

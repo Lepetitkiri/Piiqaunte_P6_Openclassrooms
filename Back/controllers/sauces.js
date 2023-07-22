@@ -62,3 +62,8 @@ exports.deleteOneSauce = (req, res, next) => {
   })
   .catch((error) => res.status(404).json({ error })); /*Erreur de traitement de la requete*/
 };
+
+/*Modification d'une sauce via PUT vers api/sauces/:id*/
+exports.modifySauce = (req, res, next) => {
+  console.log("test de la nouvelle route PUT");
+}
