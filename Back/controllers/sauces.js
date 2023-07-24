@@ -118,3 +118,9 @@ exports.modifySauce = (req, res, next) => {
     })
     .catch((error) => res.status(404).json({ error })); /*Erreur de traitement de la requete findOne*/
 };
+
+
+/* Like/Dislike d'une sauce via POST vers /api/sauces/:id/like */
+exports.likeOrDislikeaASauce = (req, res, next) => {
+  console.log("test de la nouvelle route des likes/dislikes");
+};
