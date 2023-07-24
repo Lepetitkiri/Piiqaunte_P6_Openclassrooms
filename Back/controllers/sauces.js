@@ -4,11 +4,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const multer = require('multer');
 
+
 /* Enregistrement dans la base de données d'une nouvelle sauce via POST vers /api/sauces*/
 exports.createANewSauce = async (req, res, next) => {
 
   const sauceObject = JSON.parse(req.body.sauce);
-  delete sauceObject._id;
+  delete sauceObject._id; /*Suppression de l'id de l'utilisateur pour éviter les usurpations*/
 
   const newSauce = new sauces({
     userId: req.auth.userId,
@@ -48,6 +49,7 @@ exports.getOneSauce = (req, res, next) => {
   .catch((error) => res.status(404).json({ error })); /*Erreur de traitement de la requete*/
 };
 
+
 /*Suppression de la base de données d'une sauce via DELETE vers /api/sauces/:id*/
 exports.deleteOneSauce = (req, res, next) => {
   sauces.findOne({_id: req.params.id}) /*Récupération de la sauce dans la database*/
@@ -63,7 +65,56 @@ exports.deleteOneSauce = (req, res, next) => {
   .catch((error) => res.status(404).json({ error })); /*Erreur de traitement de la requete*/
 };
 
+
 /*Modification d'une sauce via PUT vers api/sauces/:id*/
 exports.modifySauce = (req, res, next) => {
-  console.log("test de la nouvelle route PUT");
-}
+
+  let newSauce;
+  (req.file === undefined) /*Définition de newSauce en fonction de si la requete contient une nouvelle image ou non*/
+    ? (
+      newSauce = req.body
+      )
+    : ( 
+      sauceObject = JSON.parse(req.body.sauce),
+      newSauce = {
+        name: sauceObject.name,
+        manufacturer: sauceObject.manufacturer,
+        description: sauceObject.description,
+        mainPepper: sauceObject.mainPepper,
+        heat: sauceObject.heat,
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+      }
+    );
+
+    delete newSauce.userId; /* Suppression de l'id pour éviter les usurpations*/
+
+    sauces.findOne({_id: req.params.id}) /*Recherche de la sauce correspondante dans la database*/
+    .then((sauce) => { /*La sauce a été trouvée dans la database*/
+
+      if (req.auth.userId !== sauce.userId) { /*Vérification de la légitimité de l'utilisateur*/
+        res.status(403).json({ message: "Vous n'êtes pas habilité à toucher à la sauce des autres !" })
+      } else {
+
+        if (req.file === undefined) { /*Seul le texte est MAJ*/
+            sauces.updateOne({ _id: req.params.id }, {
+              $set: {
+                name: newSauce.name,
+                manufacturer: newSauce.manufacturer,
+                description: newSauce.description,
+                mainPepper: newSauce.mainPepper,
+                heat: newSauce.heat
+              }
+            })
+            .then(() => res.status(200).json({ message: `Le texte de la sauce a bien été mis à jour !` }))
+            .catch((error) => res.status(401).json({ error })); /*Erreur de la requete updateOne*/
+
+          } else { /*Le texte ET l'image sont MAJ*/
+          sauces.updateOne({ _id: req.params.id }, newSauce)
+          .then(() => res.status(200).json({ message: `Le texte et l'image de la sauce ont bien été mis à jour !` }))
+          .catch((error) => res.status(401).json({ error })); /*Erreur de la requete updateOne*/
+          };
+      }
+
+    })
+    .catch((error) => res.status(404).json({ error })); /*Erreur de traitement de la requete findOne*/
+};
