@@ -122,5 +122,50 @@ exports.modifySauce = (req, res, next) => {
 
 /* Like/Dislike d'une sauce via POST vers /api/sauces/:id/like */
 exports.likeOrDislikeaASauce = (req, res, next) => {
-  console.log("test de la nouvelle route des likes/dislikes");
+
+  sauces.findOne({_id: req.params.id}) /*Recherche de la sauce correspondante dans la database*/
+  .then((sauce) => { /*La sauce a été trouvée dans la database*/
+
+      /* Cas du like : req.body.like = 1 signifie que l'utilisateur était neutre et qu'il cherche à liker pour la première fois */
+      if (req.body.like === 1) {
+        /* On vérifie que son nom n'apparait pas dans sauce.usersLiked */
+        if (!sauce.usersLiked.includes(req.auth.userId)) {
+          /* On ajoute un like a sauce.likes et on ajoute son nom à sauce.usersLiked */
+          sauce.likes += 1;
+          sauce.usersLiked.push(req.auth.userId);
+        } else {
+          res.status(403).json({ message: "Vous ne pouvez pas liker 2 fois la même sauce même si elle est délicieuse !"})
+        }
+
+
+      } else {
+
+        /* Cas du dislike : req.body.like = -1 signifie que l'utilisateur était neutre et qu'il cherche à disliker pour la première fois */
+        if (req.body.like === -1) {
+          /* On vérifie que son nom n'apparait pas dans sauce.usersDisliked */
+          if (!sauce.usersDisliked.includes(req.auth.userId)) {
+            /* On ajoute un dislike a sauce.dislikes et on ajoute son nom à sauce.usersDisliked */
+            sauce.dislikes += 1;
+            sauce.usersDisliked.push(req.auth.userId);
+          } else {
+            res.status(403).json({ message: "Vous ne pouvez pas disliker 2 fois la même sauce même si elle est vraiment mauvaise !"})
+          }
+
+
+        } else {
+          /* Cas de l'annulation : req.body.like = 0 signifie que l'utilisateur cherche à annuler son like/dislike */
+          
+          console.log("Cas non traité pour le moment")
+
+        }
+      }
+         
+
+    /* Dans tous les cas, on enregistre les modifications effectuées sur la sauce dans la database */
+    sauce.save()
+    .then(() => res.status(200).json({ message: 'Action de like/dislike correctement executée !' }))
+    .catch(error => res.status(400).json({ error }));
+
+  })
+  .catch((error) => res.status(404).json({ error })); /*Erreur de traitement de la requete findOne*/
 };
