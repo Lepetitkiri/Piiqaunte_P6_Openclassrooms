@@ -154,12 +154,20 @@ exports.likeOrDislikeaASauce = (req, res, next) => {
 
         } else {
           /* Cas de l'annulation : req.body.like = 0 signifie que l'utilisateur cherche à annuler son like/dislike */
-          
-          console.log("Cas non traité pour le moment")
+          /* Pour pouvoir réaliser l'action, il faut d'abord connaitre son statut préalable (likait-il ou dislikait il?) */
+          if (sauce.usersLiked.includes(req.auth.userId)) { /* L'utilisateur likait auparavant*/
+            /* On supprime un like a sauce.likes et on supprime son nom de sauce.usersLiked */
+            sauce.likes -= 1;
+            sauce.usersLiked = sauce.usersLiked.filter(userId => userId !== req.auth.userId);
 
+          } else { /* L'utilisateur dislikait auparavant */
+            /* On supprime un dislike a sauce.dislikes et on supprime son nom de sauce.usersDisliked */
+            sauce.dislikes -= 1;
+            sauce.usersDisliked = sauce.usersDisliked.filter(userId => userId !== req.auth.userId);
+          }
         }
       }
-         
+
 
     /* Dans tous les cas, on enregistre les modifications effectuées sur la sauce dans la database */
     sauce.save()
