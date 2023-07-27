@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const path = require('path');
+const helmet = require('helmet');
 const app = express();
 
 const userRoutes = require('./routes/user');
@@ -19,6 +20,8 @@ mongoose.connect(process.env.mongoDBURI,
 app.use(bodyParser.json());
 /*Middleware d'analyse des requêtes via des formulaires HTML*/
 app.use(bodyParser.urlencoded({ extended: true }));
+/*Middleware de sécurité contre les attaques courantes*/
+app.use(helmet());
 
   /* Prolèmes de CORS*/
  app.use((req, res, next) => {
