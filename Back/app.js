@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const path = require('path');
 const helmet = require('helmet');
+const xssClean = require('xss-clean');
 const app = express();
 
 const userRoutes = require('./routes/user');
@@ -16,12 +17,14 @@ mongoose.connect(process.env.mongoDBURI,
   .then(() => console.log('Connexion à MongoDB réussie !'))
   .catch(() => console.log('Connexion à MongoDB échouée !'));
 
+/*Middleware de nettoyage automatique des données d'entrée des requetes permettant de se protéger de certaines attaques XSS*/
+app.use(xssClean());
+/*Middleware de sécurité contre les attaques courantes*/
+app.use(helmet());
 /*Middleware d'analyse des requêtes JSON*/
 app.use(bodyParser.json());
 /*Middleware d'analyse des requêtes via des formulaires HTML*/
 app.use(bodyParser.urlencoded({ extended: true }));
-/*Middleware de sécurité contre les attaques courantes*/
-app.use(helmet());
 
   /* Prolèmes de CORS*/
  app.use((req, res, next) => {
