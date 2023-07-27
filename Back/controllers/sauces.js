@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const express = require('express');
 const bodyParser = require('body-parser');
 const multer = require('multer');
+const fs = require('fs');
 
 
 /* Enregistrement dans la base de données d'une nouvelle sauce via POST vers /api/sauces*/
@@ -55,9 +56,12 @@ exports.deleteOneSauce = (req, res, next) => {
   sauces.findOne({_id: req.params.id}) /*Récupération de la sauce dans la database*/
   .then((sauce) => {
     if (req.auth.userId === sauce.userId) {
-      sauce.deleteOne({_id: req.params.id})
-      .then((sauce) => res.status(200).json({ message: `Bye Bye la sauce, on te supprime définitivement !` }))
-      .catch((error) => res.status(404).json({ error })) /*Erreur dans la suppression de la sauce*/
+      const filename = sauce.imageUrl.split('/images/')[1] /*Suppression de l'image dans la database*/
+      fs.unlink(`images/${filename}`, ()=>{
+        sauce.deleteOne({_id: req.params.id}) /*Suppression de la sauce dans la database*/
+        .then((sauce) => res.status(200).json({ message: `Bye Bye la sauce, on te supprime définitivement !` }))
+        .catch((error) => res.status(404).json({ error })); /*Erreur dans la suppression de la sauce*/
+      })
     } else {
        res.status(403).json({ message: "Vous n'êtes pas habilité à toucher à la sauce des autres !" })
     };
