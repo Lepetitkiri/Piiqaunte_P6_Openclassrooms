@@ -17,7 +17,7 @@ const storage = multer.diskStorage({
       const absolutePath = path.resolve('./images'); /* Création d'une route statique */
       cb(null, absolutePath);
     },
-    filename: function (req, file, cb) {
+    filename: function (req, file, cb) { /* Definition d'un nom de fichier */
       const nameWithExtension = file.originalname.split(" ").join("_");
       const name = nameWithExtension.split(".")[0];
       const extension = MIME_TYPES[file.mimetype];

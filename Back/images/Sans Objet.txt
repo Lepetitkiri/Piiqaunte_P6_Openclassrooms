@@ -1,1 +1,1 @@
-Fichier "astuce" permettant de Pusher de dossier "images" sans son contenu sur gitHub
+Fichier "astuce" permettant de Pusher le dossier "images" sans son contenu sur gitHub
