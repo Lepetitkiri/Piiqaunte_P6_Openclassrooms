@@ -19,8 +19,6 @@ mongoose.connect(process.env.mongoDBURI,
 
 /*Middleware de nettoyage automatique des données d'entrée des requetes permettant de se protéger de certaines attaques XSS*/
 app.use(xssClean());
-/*Middleware de sécurité contre les attaques courantes*/
-app.use(helmet());
 /*Middleware d'analyse des requêtes JSON*/
 app.use(bodyParser.json());
 /*Middleware d'analyse des requêtes via des formulaires HTML*/
@@ -39,5 +37,8 @@ app.use(express.json()); /*Ajout du middleware express.json() à express pour po
 app.use('/images', express.static(path.join(__dirname, 'images'))); /*Création d'une route statique */
 app.use('/api/auth', userRoutes);
 app.use('/api/sauces', sauceRoutes);
+
+/*Middleware de sécurité contre les attaques courantes*/
+app.use(helmet());
 
 module.exports = app;

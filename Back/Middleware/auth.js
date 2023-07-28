@@ -13,7 +13,6 @@ module.exports = (req, res, next) => {
         req.auth = {
             userId: userId /*Ajout de l'ID de l'utilisateur à l'objet req pour que les différentes routes puissent l'exploiter*/
         };
-        console.log("Token conforme")
     next();
     } catch(error) {
        res.status(403).json({ message: "unauthorized request" });
