@@ -11,7 +11,10 @@ exports.createUser = (req, res, next) => {
     /*Vérification du format de l'adresse email saisie pour sécurisation de l'application*/
     if (validator.isEmail(req.body.email)) {
 
-        /*Hashage du password*/
+        /* Ajout de sel au mdp */
+        bcrypt.genSalt(10)
+        .then(salt => {
+            /*Hashage du password*/
             bcrypt.hash(req.body.password, 10)
             .then(hash => {
                 /* Création d'une instance de user */
@@ -21,12 +24,14 @@ exports.createUser = (req, res, next) => {
                 });
 
                 /*Enregistrement de newUser dans la dataBase*/
-            newUser.save() 
-            .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
-            .catch(error => res.status(400).json({ error })); /*Erreur de sauvegarde dans la database*/
+                newUser.save() 
+                .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
+                .catch(error => res.status(400).json({ error })); /*Erreur de sauvegarde dans la database*/
             })
 
             .catch(error => res.status(500).json({error})); /*Erreur de traitement de la requete de hashage*/
+        })
+        .catch(error => res.status(500).json({error})); /*Erreur lors du salage*/
 
     } else {
         return res.status(500).json({ message: 'Ceci n\'est pas une adresse email valide !' }) /*Erreur dans le format de l'adresse email saisie*/
